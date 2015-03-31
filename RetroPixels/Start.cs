@@ -27,6 +27,7 @@ namespace RetroPixels
             {
                 var cameraController = GameObject.FindObjectOfType<CameraController>().gameObject;
                 RetroPixel pix = cameraController.AddComponent<RetroPixel>();
+                pix.enabled = false;
                 cameraController.AddComponent<RPEffectController>();
             }
         }

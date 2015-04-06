@@ -55,6 +55,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config.cs" />
     <Compile Include="EffectController.cs" />
     <Compile Include="HiddenShaders\RetroPixel2.cs" />
     <Compile Include="Logging.cs" />

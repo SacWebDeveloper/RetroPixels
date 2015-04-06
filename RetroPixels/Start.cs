@@ -19,6 +19,9 @@ namespace RetroPixels
 
     public class ModLoad : LoadingExtensionBase
     {
+        private RPEffectController toggler;
+        private RetroPixel pix;
+
         public override void OnLevelLoaded(LoadMode mode)
         {
             if (mode != LoadMode.NewGame && mode != LoadMode.LoadGame)
@@ -26,10 +29,20 @@ namespace RetroPixels
             else
             {
                 var cameraController = GameObject.FindObjectOfType<CameraController>().gameObject;
-                RetroPixel pix = cameraController.AddComponent<RetroPixel>();
+                pix = cameraController.AddComponent<RetroPixel>();
                 pix.enabled = false;
-                cameraController.AddComponent<RPEffectController>();
+                toggler = cameraController.AddComponent<RPEffectController>();
             }
+        }
+        public override void OnLevelUnloading()
+        {
+            GameObject.Destroy(toggler);
+            GameObject.Destroy(pix);
+        }
+        public override void OnReleased()
+        {
+            GameObject.Destroy(toggler);
+            GameObject.Destroy(pix);
         }
     }
 }

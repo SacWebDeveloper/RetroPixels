@@ -16,6 +16,7 @@ namespace RetroPixels
         public float vert = 256;
         public float hor = 256;
         public float num = 4;
+        public bool useActualColors;
 
         public bool userWantsEffect;
 

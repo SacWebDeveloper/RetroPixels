@@ -21,8 +21,8 @@ namespace RetroPixels
         KeyCode effectToggle;
         public Config.Tab tab;
 
-        private Color lightGreen;
-        public GUIStyle greenButton;
+        private Color EightBitSkiesLightGreenColor;
+        public GUIStyle EightBitSkiesGreenButton;
 
 
         bool userWantsEffect = false;
@@ -30,10 +30,11 @@ namespace RetroPixels
         float vert = 256;
         float hor = 256;
         float num = 4;
+        bool useActualColors = false;
 
         void Awake()
         {
-            lightGreen = new Color(0.6f, 1.0f, 0.6f);
+            EightBitSkiesLightGreenColor = new Color(0.6f, 1.0f, 0.6f);
             config = Config.Deserialize(configPath);
             InitializeFromConfig();
         }
@@ -44,6 +45,10 @@ namespace RetroPixels
             LoadConfig(false);
             if (config.menuToggle == KeyCode.None)
                 config.menuToggle = KeyCode.Quote;
+            if (useActualColors)
+                pix.SetActualColors(true);
+            else
+                pix.SetActualColors(false);
             SaveConfig();
         }
 
@@ -57,6 +62,7 @@ namespace RetroPixels
                 config.vert = 256;
                 config.hor = 256;
                 config.num = 4;
+                config.useActualColors = false;
 
                 config.menuToggle = KeyCode.Quote;
                 config.effectToggle = KeyCode.None;
@@ -72,6 +78,8 @@ namespace RetroPixels
                     config.hor = 256;
                 if (IsNull(config.num))
                     config.num = 4;
+                if (IsNull(config.useActualColors))
+                    config.useActualColors = false;
 
 
                 if (IsNull(config.menuToggle))
@@ -90,14 +98,11 @@ namespace RetroPixels
 
         void OnGUI()
         {
-            if (greenButton == null)
+            if (EightBitSkiesGreenButton == null)
             {
-                greenButton = new GUIStyle(GUI.skin.button);
-                greenButton.normal.textColor = lightGreen;
-                greenButton.fontStyle = FontStyle.Bold;
-                //greenTex = new Texture2D(1, 1);
-                //greenTex.SetPixel(0, 0, darkGreen);
-                //greenTex.Apply();
+                EightBitSkiesGreenButton = new GUIStyle(GUI.skin.button);
+                EightBitSkiesGreenButton.normal.textColor = EightBitSkiesLightGreenColor;
+                EightBitSkiesGreenButton.fontStyle = FontStyle.Bold;
             }
             if (showSettingsPanel)
             {
@@ -124,10 +129,25 @@ namespace RetroPixels
             #endregion
             if (tab == Config.Tab.EightBit)
             {
-                ResizeWindow(730, 350);
+                ResizeWindow(730, 380);
 
-                userWantsEffect = GUILayout.Toggle(userWantsEffect, "State");
-
+                userWantsEffect = GUILayout.Toggle(userWantsEffect, "Toggle Effect On/Off");
+                if (!useActualColors)
+                {
+                    if (GUILayout.Button("(NEW) Click to disable color overriding. (THIS IS AWESOME!!!!!)"))
+                    {
+                        useActualColors = true;
+                        pix.SetActualColors(true);
+                    }
+                }
+                else
+                {
+                    if (GUILayout.Button("(NEW) Click to enable color overriding."))
+                    {
+                        useActualColors = false;
+                        pix.SetActualColors(false);
+                    }
+                }
 
                 GUILayout.Label("Horizontal: " + hor.ToString("F0"));
                 hor = GUILayout.HorizontalSlider(hor, 0, 3840);
@@ -337,7 +357,7 @@ namespace RetroPixels
 
             GUILayout.BeginHorizontal();
 
-            if (GUILayout.Button("Save", greenButton))
+            if (GUILayout.Button("Save", EightBitSkiesGreenButton))
             {
                 SaveConfig();
             }
@@ -528,7 +548,7 @@ namespace RetroPixels
             config.num = num;
             config.vert = vert;
             config.userWantsEffect = userWantsEffect;
-
+            config.useActualColors = useActualColors;
             Config.Serialize(configPath, config);
         }
 
@@ -541,12 +561,13 @@ namespace RetroPixels
                 windowRect.x = windowLoc.x;
                 windowRect.y = windowRect.y;
             }
-
+            
             menuToggle = config.menuToggle;
             effectToggle = config.effectToggle;
             hor = config.hor;
             vert = config.vert;
             num = config.num;
+            useActualColors = config.useActualColors;
         }
     }
 }

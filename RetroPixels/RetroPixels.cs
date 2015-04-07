@@ -12,7 +12,7 @@ namespace RetroPixels
         public int verticalResolution = 200;
 
         public int numColors = MAX_NUM_COLORS;
-
+        public bool useActualColors = false;
         public string shader2;
         public string shader3;
         public string shader4;
@@ -56,8 +56,8 @@ namespace RetroPixels
 
         public void OnRenderImage(RenderTexture src, RenderTexture dest)
         {
-            horizontalResolution = Mathf.Clamp(horizontalResolution, 1, 2048);
-            verticalResolution = Mathf.Clamp(verticalResolution, 1, 2048);
+            horizontalResolution = Mathf.Clamp(horizontalResolution, 1, 3840);
+            verticalResolution = Mathf.Clamp(verticalResolution, 1, 2160);
             numColors = Mathf.Clamp(numColors, 2, 8);
             Material theMaterial;
             theMaterial = new Material(shaderStrings[numColors - 1]);
@@ -71,10 +71,12 @@ namespace RetroPixels
                 if (numColors > 5) theMaterial.SetColor("_Color5", color5);
                 if (numColors > 6) theMaterial.SetColor("_Color6", color6);
                 if (numColors > 7) theMaterial.SetColor("_Color7", color7);
-
                 RenderTexture scaled = RenderTexture.GetTemporary(horizontalResolution, verticalResolution);
                 scaled.filterMode = FilterMode.Point;
-                Graphics.Blit(src, scaled, theMaterial);
+                if (!useActualColors)
+                    Graphics.Blit(src, scaled, theMaterial);
+                else
+                    Graphics.Blit(src, scaled);
                 Graphics.Blit(scaled, dest);
                 RenderTexture.ReleaseTemporary(scaled);
                 UnityEngine.Object matTrash = theMaterial;
@@ -95,6 +97,11 @@ namespace RetroPixels
             {
                 Material.DestroyImmediate(theMaterial);
             }
+        }
+
+        public void SetActualColors(bool toggle)
+        {
+            useActualColors = toggle;
         }
     }
 }

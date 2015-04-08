@@ -24,12 +24,14 @@ namespace RetroPixels
         private Color EightBitSkiesLightGreenColor;
         public GUIStyle EightBitSkiesGreenButton;
 
-
+        private string guiColorModeLabel = "";
+        private string guiBitModeLabel = "";
         bool userWantsEffect = false;
 
         float vert = 256;
         float hor = 256;
         float num = 4;
+        int bits;
         bool useActualColors = false;
 
         void Awake()
@@ -43,13 +45,113 @@ namespace RetroPixels
         {
             pix = GetComponent<RetroPixel>();
             LoadConfig(false);
+            
+            InitializeColorMode();
+            InitializeBitToggleLabel();
             if (config.menuToggle == KeyCode.None)
                 config.menuToggle = KeyCode.Quote;
+            
+            
             if (useActualColors)
                 pix.SetActualColors(true);
             else
                 pix.SetActualColors(false);
+
+
+            
+
+           
+
+
             SaveConfig();
+        }
+
+        void InitializeColorMode()
+        {
+            switch (config.colorMode)
+            {
+                case RetroPixel.RPColorMode.Modern:
+                    pix.SetModernColors();
+                    guiColorModeLabel = "Modern";
+                    break;
+                case RetroPixel.RPColorMode.Retro:
+                    pix.SetRetroColors();
+                    guiColorModeLabel = "Retro";
+                    break;
+                case RetroPixel.RPColorMode.SuperRetro:
+                    pix.SetSuperRetroColors();
+                    guiColorModeLabel = "Super Retro";
+                    break;
+            }
+        }
+
+        void InitializeBitToggleLabel()
+        {
+            switch (bits)
+            {
+                case 8:
+                    guiBitModeLabel = "2-8 Colors";
+                    break;
+                case 16:
+                    guiBitModeLabel = "16 Colors";
+                    break;
+                case 32:
+                    guiBitModeLabel = "32 Colors";
+                    break;
+                case 64:
+                    guiBitModeLabel = "64 Colors";
+                    break;
+            }
+        }
+        void CycleColorMode()
+        {
+            if (bits < 999)
+            {
+                switch (pix.colorMode)
+                {
+                    case RetroPixel.RPColorMode.Modern:
+                        {
+                            pix.colorMode = RetroPixel.RPColorMode.SuperRetro;
+                            pix.SetSuperRetroColors();
+                            guiColorModeLabel = "Super Retro";
+                            break;
+                        }
+                    case RetroPixel.RPColorMode.Retro:
+                        {
+                            pix.colorMode = RetroPixel.RPColorMode.Modern;
+                            pix.SetModernColors();
+                            guiColorModeLabel = "Modern";
+                            break;
+                        }
+                    case RetroPixel.RPColorMode.SuperRetro:
+                        {
+                            pix.colorMode = RetroPixel.RPColorMode.Retro;
+                            pix.SetRetroColors();
+                            guiColorModeLabel = "Retro";
+                            break;
+                        }
+                }
+            }
+            else
+            {
+                switch (pix.colorMode)
+                {
+                    case RetroPixel.RPColorMode.Modern:
+                        {
+                            pix.colorMode = RetroPixel.RPColorMode.Retro;
+                            pix.SetRetroColors();
+                            guiColorModeLabel = "Retro";
+                            break;
+                        }
+                    case RetroPixel.RPColorMode.Retro:
+                        {
+                            pix.colorMode = RetroPixel.RPColorMode.Modern;
+                            pix.SetModernColors();
+                            guiColorModeLabel = "Modern";
+                            break;
+                        }
+                }
+            }
         }
 
         void InitializeFromConfig()
@@ -58,11 +160,14 @@ namespace RetroPixels
             {
                 config = new Config();
 
+                config.colorMode = RetroPixel.RPColorMode.Modern;
                 config.windowLoc = new Vector2(64, 64);
                 config.vert = 256;
                 config.hor = 256;
                 config.num = 4;
                 config.useActualColors = false;
+                config.bits = 8;
+                config.retroColors = false;
 
                 config.menuToggle = KeyCode.Quote;
                 config.effectToggle = KeyCode.None;
@@ -70,6 +175,8 @@ namespace RetroPixels
             }
             else
             {
+                if (IsNull(config.colorMode))
+                    config.colorMode = RetroPixel.RPColorMode.Modern;
                 if (IsNull(config.windowLoc))
                     config.windowLoc = new Vector2(64, 64);
                 if (IsNull(config.vert))
@@ -80,6 +187,10 @@ namespace RetroPixels
                     config.num = 4;
                 if (IsNull(config.useActualColors))
                     config.useActualColors = false;
+                if (IsNull(config.bits))
+                    config.bits = 8;
+                if (IsNull(config.retroColors))
+                    config.retroColors = false;
 
 
                 if (IsNull(config.menuToggle))
@@ -129,12 +240,12 @@ namespace RetroPixels
             #endregion
             if (tab == Config.Tab.EightBit)
             {
-                ResizeWindow(730, 380);
+                ResizeWindow(730, 410);
 
                 userWantsEffect = GUILayout.Toggle(userWantsEffect, "Toggle Effect On/Off");
                 if (!useActualColors)
                 {
-                    if (GUILayout.Button("(NEW) Click to disable color overriding. (THIS IS AWESOME!!!!!)"))
+                    if (GUILayout.Button("Modify colors: True"))
                     {
                         useActualColors = true;
                         pix.SetActualColors(true);
@@ -142,24 +253,75 @@ namespace RetroPixels
                 }
                 else
                 {
-                    if (GUILayout.Button("(NEW) Click to enable color overriding."))
+                    if (GUILayout.Button("Modify colors: False"))
                     {
                         useActualColors = false;
                         pix.SetActualColors(false);
                     }
                 }
+                if (!useActualColors)
+                {
+                    GUILayout.BeginHorizontal();
+                    if (bits == 32)
+                    {
+                        if (GUILayout.Button("32 Colors"))
+                        {
+                            bits = 64;
+                            pix.SetBit(64);
+                        }
+                    }
+                    else if (bits == 64)
+                    {
+                        if (GUILayout.Button("64 Colors"))
+                        {
+                            bits = 8;
+                            pix.SetBit(8);
+                        }
+                    }
+                    else if (bits == 8)
+                    {
+                        if (GUILayout.Button("2-8 Colors"))
+                        {
+                            /*if (pix.colorMode == RetroPixel.RPColorMode.SuperRetro)
+                            {
+                                pix.colorMode = RetroPixel.RPColorMode.Retro;
+                                pix.SetRetroColors();
+                                guiColorModeLabel = "Retro";
+                            }*/
+                            bits = 16;
+                            pix.SetBit(16);
+                        }
+                    }
+                    else
+                    {
+                        if (GUILayout.Button("16 Colors"))
+                        {
+                            bits = 32;
+                            pix.SetBit(32);
+                        }
+                    }
+                    
+                    
+                    if (GUILayout.Button(guiColorModeLabel))
+                    {
+                        CycleColorMode();
+                    }
+                    
+                    GUILayout.EndHorizontal();
+                }
+                if (!useActualColors)
+                {
+                    if (bits == 8)
+                    {
+                        GUILayout.Label("Colors: " + num.ToString("F0"));
+                        num = GUILayout.HorizontalSlider(num, 1, 8);
+                        pix.numColors = Mathf.RoundToInt(num);
+                    }
+                }
 
-                GUILayout.Label("Horizontal: " + hor.ToString("F0"));
-                hor = GUILayout.HorizontalSlider(hor, 0, 3840);
-                pix.horizontalResolution = Mathf.RoundToInt(hor);
-
-                GUILayout.Label("Vertical: " + vert.ToString("F0"));
-                vert = GUILayout.HorizontalSlider(vert, 0, 2160);
-                pix.verticalResolution = Mathf.RoundToInt(vert);
-
-                GUILayout.Label("Colors: " + num.ToString("F0"));
-                num = GUILayout.HorizontalSlider(num, 1, 8);
-                pix.numColors = Mathf.RoundToInt(num);
+                
+                
+                
 
 
                 GUILayout.Space(10f);
@@ -354,7 +516,13 @@ namespace RetroPixels
                 else
                     GUILayout.Label("No effect-toggle hotkey is bound to 8 Bit Skies.");
             }
+            GUILayout.Label("Horizontal: " + hor.ToString("F0"));
+            hor = GUILayout.HorizontalSlider(hor, 0, 3840);
+            pix.horizontalResolution = Mathf.RoundToInt(hor);
 
+            GUILayout.Label("Vertical: " + vert.ToString("F0"));
+            vert = GUILayout.HorizontalSlider(vert, 0, 2160);
+            pix.verticalResolution = Mathf.RoundToInt(vert);
             GUILayout.BeginHorizontal();
 
             if (GUILayout.Button("Save", EightBitSkiesGreenButton))
@@ -549,6 +717,8 @@ namespace RetroPixels
             config.vert = vert;
             config.userWantsEffect = userWantsEffect;
             config.useActualColors = useActualColors;
+            config.colorMode = pix.colorMode;
+            config.bits = bits;
             Config.Serialize(configPath, config);
         }
 
@@ -568,6 +738,9 @@ namespace RetroPixels
             vert = config.vert;
             num = config.num;
             useActualColors = config.useActualColors;
+            pix.colorMode = config.colorMode;
+            pix.bits = config.bits;
+            bits = pix.bits;
         }
     }
 }

@@ -12,11 +12,13 @@ namespace RetroPixels
         public KeyCode menuToggle;
         public KeyCode effectToggle;
         public Vector2 windowLoc;
-
+        public RetroPixel.RPColorMode colorMode;
         public float vert = 256;
         public float hor = 256;
         public float num = 4;
         public bool useActualColors;
+        public int bits;
+        public bool retroColors;
 
         public bool userWantsEffect;
 

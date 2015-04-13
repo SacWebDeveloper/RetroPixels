@@ -4,7 +4,7 @@ using System.Collections;
 namespace RetroPixels
 {
     [RequireComponent(typeof(Camera))]
-    public class RetroPixel : MonoBehaviour
+    public class EBS_RetroPixel : MonoBehaviour
     {
         public static readonly int MAX_NUM_COLORS = 8;
 
@@ -97,17 +97,17 @@ namespace RetroPixels
             color7 = modernColor7;
             
             Material theMaterial = new Material(shaderStrings[numColors - 1]);
-            shaderStrings[0] = RetroPixel2.pixel2;
-            shaderStrings[1] = RetroPixel2.pixel3;
-            shaderStrings[2] = RetroPixel2.pixel4;
-            shaderStrings[3] = RetroPixel2.pixel5;
-            shaderStrings[4] = RetroPixel2.pixel6;
-            shaderStrings[5] = RetroPixel2.pixel7;
-            shaderStrings[6] = RetroPixel2.pixel8;
-            shaderStrings[7] = RetroPixel2.pixel8;
-            bit16shad = RetroPixel2.pixel16;
-            bit32shad = RetroPixel2.pixel32mult;
-            bit64shad = RetroPixel2.pixel64;
+            shaderStrings[0] = EBS_ShadsRetroPixel.pixel2;
+            shaderStrings[1] = EBS_ShadsRetroPixel.pixel3;
+            shaderStrings[2] = EBS_ShadsRetroPixel.pixel4;
+            shaderStrings[3] = EBS_ShadsRetroPixel.pixel5;
+            shaderStrings[4] = EBS_ShadsRetroPixel.pixel6;
+            shaderStrings[5] = EBS_ShadsRetroPixel.pixel7;
+            shaderStrings[6] = EBS_ShadsRetroPixel.pixel8;
+            shaderStrings[7] = EBS_ShadsRetroPixel.pixel8;
+            bit16shad = EBS_ShadsRetroPixel.pixel16;
+            bit32shad = EBS_ShadsRetroPixel.pixel32mult;
+            bit64shad = EBS_ShadsRetroPixel.pixel64;
 
         }
 

@@ -20,7 +20,8 @@ namespace RetroPixels
     public class ModLoad : LoadingExtensionBase
     {
         private RPEffectController toggler;
-        private RetroPixel pix;
+        private EBS_RetroPixel ebsRP;
+        private EBS_OldSchoolPix ebsOSP;
 
         public override void OnLevelLoaded(LoadMode mode)
         {
@@ -29,20 +30,25 @@ namespace RetroPixels
             else
             {
                 var cameraController = GameObject.FindObjectOfType<CameraController>().gameObject;
-                pix = cameraController.AddComponent<RetroPixel>();
-                pix.enabled = false;
+                ebsRP = cameraController.AddComponent<EBS_RetroPixel>();
+                ebsRP.enabled = false;
+                ebsOSP = cameraController.AddComponent<EBS_OldSchoolPix>();
+                ebsOSP.enabled = false;
                 toggler = cameraController.AddComponent<RPEffectController>();
+                toggler.enabled = true;
             }
         }
         public override void OnLevelUnloading()
         {
             GameObject.Destroy(toggler);
-            GameObject.Destroy(pix);
+            GameObject.Destroy(ebsRP);
+            GameObject.Destroy(ebsOSP);
         }
         public override void OnReleased()
         {
             GameObject.Destroy(toggler);
-            GameObject.Destroy(pix);
+            GameObject.Destroy(ebsRP);
+            GameObject.Destroy(ebsOSP);
         }
     }
 }

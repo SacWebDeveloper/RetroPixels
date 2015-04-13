@@ -57,6 +57,8 @@
   <ItemGroup>
     <Compile Include="Config.cs" />
     <Compile Include="EffectController.cs" />
+    <Compile Include="HiddenShaders\HiddenShader.cs" />
+    <Compile Include="HiddenShaders\OldSchoolPix.cs" />
     <Compile Include="HiddenShaders\RetroPixel2.cs" />
     <Compile Include="Logging.cs" />
     <Compile Include="RetroPixels.cs" />
